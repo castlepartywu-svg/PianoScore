@@ -1,1 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>雲端硬碟 - 鋼琴樂譜</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+    background: #fff;
+    color: #202124;
+    font-size: 14px;
+  }
 
+  /* macOS menu bar */
+  .menubar {
+    background: #2f5f8f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 4px 16px;
+    font-size: 13px;
+    gap: 20px;
+  }
+  .menubar .apple { font-size: 15px; }
+  .menubar .browser-name { font-weight: 600; margin-right: 8px; }
+  .menubar .menu-items { display: flex; gap: 18px; flex: 1; }
+  .menubar .right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+  .menubar .right .icon { width: 16px; text-align: center; }
+
+  /* Safari toolbar */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 14px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .traffic-lights { display: flex; gap: 8px; }
+  .traffic-lights span { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .tl-red { background: #ff5f57; }
+  .tl-yellow { background: #febc2e; }
+  .tl-green { background: #28c840; }
+  .sidebar-toggle { color: #888; font-size: 15px; margin-left: 8px; }
+  .nav-arrows { display: flex; gap: 16px; color: #bbb; font-size: 16px; }
+  .nav-arrows .active { color: #333; }
+  .addr-bar {
+    flex: 1;
+    background: #eef0f3;
+    border-radius: 8px;
+    padding: 6px 0;
+    text-align: center;
+    color: #333;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .toolbar-icons { display: flex; gap: 16px; color: #666; font-size: 16px; margin-left: 8px; }
+
+  /* bookmarks bar */
+  .bookmarks {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 18px;
+    border-bottom: 1px solid #eee;
+  }
+  .bm-icon {
+    width: 22px; height: 22px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff; font-weight: 700;
+  }
+  .bm-pill {
+    background: #f1f3f4;
+    border-radius: 14px;
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #444;
+  }
+  .bm-pill.grow { flex: 1; }
+  .bm-spacer { flex: 1; }
+
+  /* Drive header */
+  .drive-header {
+    display: flex;
+    align-items: center;
+    padding: 18px 32px;
+    gap: 32px;
+  }
+  .drive-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    color: #5f6368;
+    white-space: nowrap;
+  }
+  .search-box {
+    flex: 1;
+    max-width: 720px;
+    background: #eef0f3;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #444;
+    font-size: 15px;
+  }
+  .search-box .sliders { margin-left: auto; color: #888; }
+  .header-spacer { flex: 1; }
+  .upgrade-btn {
+    background: #d3e3fd;
+    color: #001d35;
+    border-radius: 18px;
+    padding: 9px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .header-icons { display: flex; align-items: center; gap: 16px; color: #5f6368; font-size: 18px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg,#f6a5a5,#f2c94c);
+    display: inline-block;
+  }
+
+  /* main layout */
+  .main {
+    display: flex;
+  }
+  .sidebar {
+    width: 230px;
+    padding: 4px 12px 20px;
+    flex-shrink: 0;
+  }
+  .new-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 12px 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    font-weight: 500;
+    font-size: 14.5px;
+    margin: 12px 4px 20px;
+    color: #3c4043;
+    width: fit-content;
+  }
+  .new-btn .plus { color: #4285f4; font-size: 18px; }
+  .nav-list { list-style: none; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 9px 14px;
+    border-radius: 0 20px 20px 0;
+    color: #3c4043;
+    font-size: 14px;
+    cursor: default;
+  }
+  .nav-item.active {
+    background: #d3e3fd;
+    color: #041e49;
+    font-weight: 600;
+  }
+  .nav-item .caret { font-size: 9px; color: #888; margin-right: -6px; }
+  .nav-icon { width: 18px; text-align: center; color: #5f6368; }
+  .nav-item.active .nav-icon { color: #001d35; }
+  .nav-divider { height: 1px; background: #eee; margin: 12px 8px; }
+
+  .storage-block { padding: 14px 18px 0; }
+  .storage-bar {
+    height: 5px;
+    background: #e8eaed;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .storage-bar-fill { height: 100%; width: 34%; background: #1a73e8; }
+  .storage-text { font-size: 12.5px; color: #444; line-height: 1.5; margin-bottom: 14px; }
+  .storage-btn {
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+    color: #444;
+    width: fit-content;
+  }
+
+  /* content area */
+  .content {
+    flex: 1;
+    padding: 20px 40px 0 24px;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 21px;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  .breadcrumb .sep { color: #999; font-size: 16px; }
+  .breadcrumb .current { font-weight: 600; color: #202124; display: flex; align-items: center; gap: 6px; }
+  .breadcrumb .caret-down { font-size: 11px; color: #888; }
+
+  .filters {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .filter-pill {
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    overflow: hidden;
+    width: fit-content;
+    position: absolute;
+    right: 96px;
+    top: 152px;
+  }
+  .view-toggle > div {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+  }
+  .view-toggle .list-mode { background: #d3e3fd; color: #041e49; font-weight: 600; }
+  .info-icon {
+    position: absolute;
+    right: 40px;
+    top: 152px;
+    color: #5f6368;
+    font-size: 18px;
+    border: 1px solid transparent;
+  }
+
+  table.file-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .file-table thead th {
+    text-align: left;
+    font-size: 13px;
+    color: #5f6368;
+    font-weight: 500;
+    padding: 6px 8px 12px;
+    border-bottom: 1px solid #eee;
+  }
+  .file-table th.sortable { display: flex; align-items: center; gap: 4px; }
+  .file-table tbody tr {
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .file-table tbody tr:hover { background: #f8f9fa; }
+  .file-table td {
+    padding: 12px 8px;
+    font-size: 14px;
+    color: #3c4043;
+  }
+  .file-name-cell { display: flex; align-items: center; gap: 14px; }
+  .pdf-icon {
+    width: 26px; height: 32px;
+    background: #ea4335;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .owner-cell { display: flex; align-items: center; gap: 8px; }
+  .owner-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg,#f6a5a5,#f2c94c);
+    display: inline-block;
+  }
+  .dots { color: #666; font-size: 16px; letter-spacing: -1px; }
+
+  /* upload toast */
+  .upload-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 0;
+    width: 340px;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .upload-toast-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 14.5px;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+    gap: 10px;
+  }
+  .upload-toast-header .spacer { flex: 1; }
+  .upload-toast-header .icon { color: #666; font-size: 14px; cursor: default; }
+  .upload-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+  }
+  .upload-item .check { color: #34a853; font-size: 16px; margin-left: auto; }
+
+  .right-rail {
+    position: fixed;
+    right: 6px;
+    top: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+  }
+  .rail-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+  <!-- macOS Menu Bar -->
+  <div class="menubar">
+    <span class="apple"></span>
+    <span class="browser-name">Safari</span>
+    <div class="menu-items">
+      <span>檔案</span><span>編輯</span><span>顯示方式</span><span>瀏覽記錄</span>
+      <span>書籤</span><span>開發</span><span>視窗</span><span>輔助說明</span>
+    </div>
+    <div class="right">
+      <span class="icon">✳️</span><span class="icon">◐</span><span class="icon">✦</span><span class="icon">▶</span><span class="icon">▤</span>
+      <span>73% 🔋</span><span>📶</span><span>🔍</span><span>▤</span>
+      <span>7月19日週日 上午7:40</span>
+    </div>
+  </div>
+
+  <!-- Safari toolbar -->
+  <div class="toolbar">
+    <div class="traffic-lights">
+      <span class="tl-red"></span><span class="tl-yellow"></span><span class="tl-green"></span>
+    </div>
+    <span class="sidebar-toggle">▤▾</span>
+    <div class="nav-arrows"><span class="active">‹</span><span>›</span></div>
+    <div class="addr-bar">🔒 drive.google.com</div>
+    <div class="toolbar-icons">↻ ⤴ ＋ ▥</div>
+  </div>
+
+  <!-- Bookmarks bar -->
+  <div class="bookmarks">
+    <div class="bm-icon" style="background:#10a37f;">AI</div>
+    <div class="bm-icon" style="background:#c2185b;">M</div>
+    <div class="bm-icon" style="background:linear-gradient(135deg,#f6a5a5,#f2c94c);">✳</div>
+    <div class="bm-icon" style="background:#4285f4;">G</div>
+    <div class="bm-icon" style="background:#7b61ff;">C</div>
+    <div class="bm-icon" style="background:linear-gradient(135deg,#4285f4,#ea4335);">◐</div>
+    <div class="bm-icon" style="background:#24292e;">◎</div>
+    <div class="bm-icon" style="background:#333;">✦</div>
+    <div class="bm-pill grow">🔍 安全檢查</div>
+    <div class="bm-pill">🔍</div>
+    <div class="bm-pill">📁 鋼琴樂譜 - Google 雲端硬碟</div>
+  </div>
+
+  <!-- Drive header -->
+  <div class="drive-header">
+    <div class="drive-logo">△ 雲端硬碟</div>
+    <div class="search-box">🔍 在雲端硬碟中搜尋 <span class="sliders">☰</span></div>
+    <div class="header-icons">?</div>
+    <div class="header-icons">⚙</div>
+    <div class="header-icons">✦</div>
+    <div class="upgrade-btn">升級</div>
+    <div class="header-icons">▦</div>
+    <span class="avatar"></span>
+  </div>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="new-btn"><span class="plus">＋</span> 新增</div>
+      <ul class="nav-list">
+        <li class="nav-item active"><span class="nav-icon">🏠</span> 首頁</li>
+        <li class="nav-item"><span class="nav-icon">▸</span><span class="nav-icon">🗄</span> 我的雲端硬碟</li>
+        <li class="nav-item"><span class="nav-icon">▸</span><span class="nav-icon">💻</span> 電腦</li>
+      </ul>
+      <div class="nav-divider"></div>
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-icon">👥</span> 與我共用</li>
+        <li class="nav-item"><span class="nav-icon">🕐</span> 近期存取</li>
+        <li class="nav-item"><span class="nav-icon">☆</span> 已加星號</li>
+      </ul>
+      <div class="nav-divider"></div>
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-icon">⚠</span> 垃圾內容</li>
+        <li class="nav-item"><span class="nav-icon">🗑</span> 垃圾桶</li>
+        <li class="nav-item"><span class="nav-icon">☁</span> 儲存空間</li>
+      </ul>
+
+      <div class="storage-block">
+        <div class="storage-bar"><div class="storage-bar-fill"></div></div>
+        <div class="storage-text">目前使用量：33.58 GB（儲<br>存空間配額：100 GB）</div>
+        <div class="storage-btn">取得更多儲存空間</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content" style="position:relative;">
+      <div class="breadcrumb">
+        我的雲端硬碟 <span class="sep">›</span>
+        <span class="current">鋼琴樂譜 <span class="caret-down">▾</span></span>
+      </div>
+
+      <div class="filters">
+        <div class="filter-pill">類型 ▾</div>
+        <div class="filter-pill">使用者 ▾</div>
+        <div class="filter-pill">上次修改日期 ▾</div>
+        <div class="filter-pill">來源 ▾</div>
+      </div>
+
+      <div class="view-toggle">
+        <div class="list-mode">✓ ☰</div>
+        <div>▦</div>
+      </div>
+      <div class="info-icon">ⓘ</div>
+
+      <table class="file-table">
+        <thead>
+          <tr>
+            <th>名稱</th>
+            <th>擁有者</th>
+            <th class="sortable">修改日期 ↓</th>
+            <th>檔案大小</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                卡農五線譜.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td>清晨7:38</td>
+            <td>1.1 MB</td>
+            <td class="dots">⋮</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                卡農簡譜.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td>清晨7:38</td>
+            <td>1.2 MB</td>
+            <td class="dots">⋮</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                我終於失去了你.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td>7月18日</td>
+            <td>212 KB</td>
+            <td class="dots">⋮</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                Kiss-the-Rain.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td>7月18日</td>
+            <td>627 KB</td>
+            <td class="dots">⋮</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                Dream-Wedding.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td></td>
+            <td></td>
+            <td class="dots"></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="file-name-cell">
+                <div class="pdf-icon">PDF</div>
+                給愛麗絲.pdf
+              </div>
+            </td>
+            <td><div class="owner-cell"><span class="owner-avatar"></span>我</div></td>
+            <td></td>
+            <td></td>
+            <td class="dots"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right side floating icons -->
+  <div class="right-rail">
+    <div class="rail-btn" style="background:#4285f4;">31</div>
+    <div class="rail-btn" style="background:#f2c94c;">💡</div>
+    <div class="rail-btn" style="background:#34a853;">✓</div>
+    <div class="rail-btn" style="background:#666;">👤</div>
+    <div class="rail-btn" style="background:#4285f4;">＋</div>
+  </div>
+
+  <!-- Upload toast -->
+  <div class="upload-toast">
+    <div class="upload-toast-header">
+      已成功上傳 6 個項目
+      <span class="spacer"></span>
+      <span class="icon">▾</span>
+      <span class="icon">✕</span>
+    </div>
+    <div class="upload-item">
+      <div class="pdf-icon">PDF</div>
+      卡農五線譜.pdf
+      <span class="check">✓</span>
+    </div>
+    <div class="upload-item">
+      <div class="pdf-icon">PDF</div>
+      卡農簡譜.pdf
+      <span class="check">✓</span>
+    </div>
+  </div>
+
+</body>
+</html>
