@@ -2,131 +2,399 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>鋼琴樂譜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "PingFang TC", "Microsoft JhengHei", "Helvetica Neue", Arial, sans-serif;
-    background: #fafafa;
-    color: #202124;
-    padding: 40px 24px;
+  :root{
+    --ink:#1c1b1a;
+    --ivory:#fbf8f2;
+    --line:#e4dfd3;
+    --brass:#a8783a;
+    --brass-deep:#8a5f2a;
+    --burgundy:#7a2e2e;
+    --muted:#7a7264;
+    --card:#ffffff;
   }
-  h1 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #202124;
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Noto Sans TC","Helvetica Neue",Arial,sans-serif;
+    background:var(--ink);
+    color:var(--ink);
+    min-height:100vh;
+    padding:56px 20px 80px;
   }
-  .file-list {
-    max-width: 640px;
-    margin: 0 auto;
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 10px;
-    overflow: hidden;
+
+  .page{
+    max-width:680px;
+    margin:0 auto;
   }
-  .file-row {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    gap: 14px;
+
+  /* ---------- Header ---------- */
+  .header{
+    background:var(--ivory);
+    border-radius:4px 4px 0 0;
+    padding:44px 40px 28px;
+    text-align:center;
+    position:relative;
   }
-  .file-row:last-child { border-bottom: none; }
-  .pdf-icon {
-    width: 28px; height: 34px;
-    background: #ea4335;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    letter-spacing:0.28em;
+    color:var(--brass-deep);
+    text-transform:uppercase;
+    margin-bottom:14px;
   }
-  .file-name {
-    flex: 1;
-    font-size: 15px;
-    color: #202124;
+  h1{
+    font-family:"Noto Serif TC","Cormorant Garamond",serif;
+    font-size:34px;
+    font-weight:700;
+    color:var(--ink);
+    letter-spacing:0.04em;
   }
-  .actions {
-    display: flex;
-    gap: 10px;
+  .subtitle{
+    margin-top:8px;
+    font-size:13px;
+    color:var(--muted);
+    letter-spacing:0.04em;
   }
-  .actions a {
-    text-decoration: none;
-    font-size: 13.5px;
-    padding: 7px 14px;
-    border-radius: 16px;
-    white-space: nowrap;
+
+  /* staff-line signature divider */
+  .staff{
+    width:100%;
+    height:34px;
+    margin-top:26px;
   }
-  .view-link {
-    color: #1a73e8;
-    border: 1px solid #d3e3fd;
-    background: #f4f8ff;
+  .staff svg{ display:block; width:100%; height:100%; }
+  .staff line{ stroke:var(--line); stroke-width:1; }
+  .staff .note{ fill:var(--brass); }
+
+  /* ---------- Search ---------- */
+  .search-wrap{
+    background:var(--ivory);
+    padding:0 40px 28px;
   }
-  .view-link:hover { background: #e8f0fe; }
-  .download-link {
-    color: #fff;
-    background: #1a73e8;
-    border: 1px solid #1a73e8;
+  .search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1.5px solid var(--ink);
+    padding-bottom:8px;
   }
-  .download-link:hover { background: #1765cc; }
+  .search-box svg{ flex-shrink:0; opacity:0.55; }
+  .search-box input{
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family:"Noto Sans TC",sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .search-box input::placeholder{ color:#b3ab9c; }
+
+  /* ---------- Groups ---------- */
+  .group{
+    background:var(--card);
+    border-top:1px solid var(--line);
+  }
+  .group-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--brass-deep);
+    padding:20px 40px 10px;
+    background:var(--ivory);
+  }
+
+  .file-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px 40px;
+    border-bottom:1px solid var(--line);
+    transition:background 0.15s ease;
+  }
+  .file-row:hover{ background:#faf7f0; }
+  .file-row:last-child{ border-bottom:none; }
+
+  .mark{
+    width:34px;
+    height:34px;
+    flex-shrink:0;
+    border:1.3px solid var(--ink);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Noto Serif TC",serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    background:var(--ivory);
+  }
+
+  .file-info{ flex:1; min-width:0; }
+  .file-name{
+    font-size:15.5px;
+    font-weight:500;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .file-tag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+    margin-top:2px;
+  }
+
+  .actions{
+    display:flex;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .actions a{
+    text-decoration:none;
+    font-size:13px;
+    font-weight:500;
+    padding:7px 15px;
+    border-radius:2px;
+    white-space:nowrap;
+    letter-spacing:0.02em;
+    transition:all 0.15s ease;
+  }
+  .view-link{
+    color:var(--ink);
+    border:1px solid var(--line);
+    background:transparent;
+  }
+  .view-link:hover{ border-color:var(--ink); }
+  .download-link{
+    color:var(--ivory);
+    background:var(--burgundy);
+    border:1px solid var(--burgundy);
+  }
+  .download-link:hover{ background:#611f1f; border-color:#611f1f; }
+
+  .empty-state{
+    padding:48px 40px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    background:var(--card);
+    display:none;
+  }
+
+  .footer-note{
+    text-align:center;
+    color:#8a8478;
+    font-size:12px;
+    padding:22px 40px 0;
+    background:var(--ivory);
+    border-radius:0 0 4px 4px;
+    padding-bottom:26px;
+  }
+
+  @media (max-width:520px){
+    body{ padding:32px 12px 60px; }
+    .header{ padding:34px 22px 22px; }
+    h1{ font-size:27px; }
+    .search-wrap{ padding:0 22px 22px; }
+    .group-label{ padding:16px 22px 8px; }
+    .file-row{
+      padding:14px 22px;
+      flex-wrap:wrap;
+    }
+    .actions{ width:100%; padding-left:50px; margin-top:2px; }
+    .actions a{ flex:1; text-align:center; }
+    .footer-note{ padding:18px 22px 22px; }
+  }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="file-list">
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">卡農五線譜.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1rU3WldS-vIFIrofgbmwGvi10rp66EMY7/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="卡農五線譜.pdf" download="卡農五線譜.pdf">下載</a>
+  <div class="header">
+    <div class="eyebrow">Piano Sheet Music</div>
+    <h1>鋼琴樂譜</h1>
+    <div class="subtitle">五線譜與簡譜收藏</div>
+    <div class="staff">
+      <svg viewBox="0 0 600 34" preserveAspectRatio="none">
+        <line x1="0" y1="4" x2="600" y2="4"></line>
+        <line x1="0" y1="12" x2="600" y2="12"></line>
+        <line x1="0" y1="20" x2="600" y2="20"></line>
+        <line x1="0" y1="28" x2="600" y2="28"></line>
+        <circle class="note" cx="120" cy="20" r="4.5"></circle>
+        <circle class="note" cx="290" cy="12" r="4.5"></circle>
+        <circle class="note" cx="460" cy="28" r="4.5"></circle>
+      </svg>
     </div>
   </div>
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">卡農簡譜.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1_8PR27C69do3X9zo2NO-Vrtbp8ouOp3f/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="卡農簡譜.pdf" download="卡農簡譜.pdf">下載</a>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchInput" placeholder="搜尋曲名…" autocomplete="off">
     </div>
   </div>
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">我終於失去了你.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1hLvvAFTA4-gFniLaaoswA-A8g8GTTINC/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="我終於失去了你.pdf" download="我終於失去了你.pdf">下載</a>
+
+  <div id="listContainer">
+
+    <div class="group" data-group="classical">
+      <div class="group-label">古典 · 器樂</div>
+
+      <div class="file-row" data-name="卡農五線譜">
+        <div class="mark">五</div>
+        <div class="file-info">
+          <div class="file-name">卡農五線譜.pdf</div>
+          <div class="file-tag">五線譜</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1rU3WldS-vIFIrofgbmwGvi10rp66EMY7/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="卡農五線譜.pdf" download="卡農五線譜.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="卡農簡譜">
+        <div class="mark">簡</div>
+        <div class="file-info">
+          <div class="file-name">卡農簡譜.pdf</div>
+          <div class="file-tag">簡譜</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1_8PR27C69do3X9zo2NO-Vrtbp8ouOp3f/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="卡農簡譜.pdf" download="卡農簡譜.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="給愛麗絲">
+        <div class="mark">五</div>
+        <div class="file-info">
+          <div class="file-name">給愛麗絲.pdf</div>
+          <div class="file-tag">五線譜</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1DlOQADtCsasE76SVwaOaw6fy80tIzBsx/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="給愛麗絲.pdf" download="給愛麗絲.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="Kiss the Rain">
+        <div class="mark">五</div>
+        <div class="file-info">
+          <div class="file-name">Kiss-the-Rain.pdf</div>
+          <div class="file-tag">五線譜</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1WbhWTaLG9RCDHR15Leng0fa4MqLc-oe0/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="Kiss-the-Rain.pdf" download="Kiss-the-Rain.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="Dream Wedding">
+        <div class="mark">五</div>
+        <div class="file-info">
+          <div class="file-name">Dream-Wedding.pdf</div>
+          <div class="file-tag">五線譜</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1B4ECLqS6GaHZ-dA3pfMOASyQKj4iKDyu/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="Dream-Wedding.pdf" download="Dream-Wedding.pdf">下載</a>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">Kiss-the-Rain.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1WbhWTaLG9RCDHR15Leng0fa4MqLc-oe0/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="Kiss-the-Rain.pdf" download="Kiss-the-Rain.pdf">下載</a>
+
+    <div class="group" data-group="pop">
+      <div class="group-label">流行 · 歌曲</div>
+
+      <div class="file-row" data-name="我終於失去了你">
+        <div class="mark">流</div>
+        <div class="file-info">
+          <div class="file-name">我終於失去了你.pdf</div>
+          <div class="file-tag">流行歌曲</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1hLvvAFTA4-gFniLaaoswA-A8g8GTTINC/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="我終於失去了你.pdf" download="我終於失去了你.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="Yellow">
+        <div class="mark">流</div>
+        <div class="file-info">
+          <div class="file-name">Yellow.pdf</div>
+          <div class="file-tag">流行歌曲</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1YamzW0Hqm-elUk5x50vf1SN2Zcjs8Szr/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="Yellow.pdf" download="Yellow.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="嘉賓">
+        <div class="mark">流</div>
+        <div class="file-info">
+          <div class="file-name">嘉賓.pdf</div>
+          <div class="file-tag">流行歌曲</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1hmdcOI88Mfg9NUMyF_yI0Sxd1m46tqNW/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="嘉賓.pdf" download="嘉賓.pdf">下載</a>
+        </div>
+      </div>
+
+      <div class="file-row" data-name="遇見">
+        <div class="mark">流</div>
+        <div class="file-info">
+          <div class="file-name">遇見.pdf</div>
+          <div class="file-tag">流行歌曲</div>
+        </div>
+        <div class="actions">
+          <a class="view-link" href="https://drive.google.com/file/d/1-Y47VIjb0FdBB9g31kBMQ_Ik8sHSlhJ1/view?usp=sharing" target="_blank">閱讀</a>
+          <a class="download-link" href="遇見.pdf" download="遇見.pdf">下載</a>
+        </div>
+      </div>
     </div>
+
+    <div class="empty-state" id="emptyState">找不到符合的曲目</div>
+    <div class="footer-note" id="footerNote">共 9 首樂譜</div>
   </div>
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">Dream-Wedding.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1B4ECLqS6GaHZ-dA3pfMOASyQKj4iKDyu/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="Dream-Wedding.pdf" download="Dream-Wedding.pdf">下載</a>
-    </div>
-  </div>
-  <div class="file-row">
-    <div class="pdf-icon">PDF</div>
-    <div class="file-name">給愛麗絲.pdf</div>
-    <div class="actions">
-      <a class="view-link" href="https://drive.google.com/file/d/1DlOQADtCsasE76SVwaOaw6fy80tIzBsx/view?usp=sharing" target="_blank">閱讀</a>
-      <a class="download-link" href="給愛麗絲.pdf" download="給愛麗絲.pdf">下載</a>
-    </div>
-  </div>
+
 </div>
 
+<script>
+  const input = document.getElementById('searchInput');
+  const rows = Array.from(document.querySelectorAll('.file-row'));
+  const groups = Array.from(document.querySelectorAll('.group'));
+  const emptyState = document.getElementById('emptyState');
+  const footerNote = document.getElementById('footerNote');
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    groups.forEach(group => {
+      let groupHasMatch = false;
+      group.querySelectorAll('.file-row').forEach(row => {
+        const name = row.dataset.name.toLowerCase();
+        const match = name.includes(q);
+        row.style.display = match ? 'flex' : 'none';
+        if (match) { groupHasMatch = true; visibleCount++; }
+      });
+      group.style.display = groupHasMatch ? 'block' : 'none';
+    });
+
+    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    footerNote.style.display = visibleCount === 0 ? 'none' : 'block';
+    footerNote.textContent = q ? `符合 ${visibleCount} 首樂譜` : `共 ${rows.length} 首樂譜`;
+  });
+</script>
 </body>
 </html>
